@@ -1,0 +1,7 @@
+@import './base.css';
+@import "tailwindcss";
+@import 'primeicons/primeicons.css';
+
+#app {
+  font-weight: normal;
+}
