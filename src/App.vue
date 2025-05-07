@@ -17,27 +17,31 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const items = ref([
-  {
-    label: "Home",
-    icon: "pi pi-home",
-    command: () => {
-      router.push("/");
-    },
-  },
-  {
-    label: "Recipes",
-    icon: "pi pi-book",
-    command: () => {
-      router.push("/recipes");
-    },
-  },
+  // {
+  //   label: "Home",
+  //   icon: "pi pi-home",
+  //   command: () => {
+  //     router.push("/");
+  //   },
+  // },
+  // {
+  //   label: "Recipes",
+  //   icon: "pi pi-book",
+  //   command: () => {
+  //     router.push("/recipes");
+  //   },
+  // },
 ]);
 </script>
 
 <style lang="scss" scoped>
 .menu-bar {
-  border: none;
-  justify-content: space-between;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  // justify-content: space-between;
+  justify-content: center;
   position: sticky;
   top: 0;
   z-index: 2;
