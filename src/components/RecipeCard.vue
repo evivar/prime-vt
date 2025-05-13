@@ -2,7 +2,7 @@
   <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4 menu-card">
     <div class="">
       <img
-        class="block xl:block mx-auto rounded w-full h-full object-cover"
+        class="block xl:block mx-auto rounded lg:w-40 w-full h-full object-cover"
         :src="
           recipe.fields?.image
             ? recipe.fields.image[0].url
@@ -68,7 +68,6 @@ const onViewRecipeURLClick = (url) => {
 
 .menu-card img {
   object-fit: cover; /* Asegura que la imagen cubra el área sin deformarse */
-  width: 100%; /* Ancho completo */
   height: 10rem;
 }
 </style>

@@ -20,44 +20,6 @@
         <template #list="recipes">
           <div class="flex flex-col gap-2">
             <RecipeCard v-for="(item, index) in recipes.items" :key="index" :recipe="item" />
-            <!-- <div v-for="(item, index) in recipes.items" :key="index">
-                <MenuCard />
-              <div
-                class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                :class="{
-                  'border-t border-surface-200 dark:border-surface-700': index !== 0,
-                }"
-              >
-                <div class="md:w-40 relative">
-                  <img
-                  v-if="item.fields.image"
-                    class="block xl:block mx-auto rounded w-full"
-                    :src="`${item.fields.image[0].url}`"
-                    :alt="item.fields.title"
-                  />
-                  </div>
-                </div>
-                <div
-                  class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6"
-                >
-                  <div
-                    class="flex flex-row md:flex-col justify-between items-start gap-2"
-                  >
-                    <div>
-                      <div class="text-lg font-medium mt-2">{{ item.fields.title}}</div>
-                    </div>
-                  </div>
-                  <div class="flex flex-col md:items-end gap-8">
-                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                      <Button
-                        icon="pi pi-eye"
-                        label="View recipe"
-                        class="flex-auto md:flex-initial whitespace-nowrap"
-                      ></Button>
-                    </div>
-                  </div>
-              </div>
-            </div> -->
           </div>
         </template>
       </DataView>
