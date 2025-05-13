@@ -31,17 +31,17 @@
             icon="pi pi-eye"
             label="View recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
-            @click="isDialogVisible = true"
+            @click="isViewDialogVisible = true"
           ></Button>
         </div>
       </div>
     </div>
-    <RecipeDialog :visible="isDialogVisible" @close="isDialogVisible=false" :recipe="recipe"/>
+    <ViewRecipeDialog :visible="isViewDialogVisible" @close="isViewDialogVisible=false" @update:visible="onUpdateVisibility" :recipe="recipe"/>
   </div>
 </template>
 
 <script setup>
-import RecipeDialog from "@/components/RecipeDialog.vue";
+import ViewRecipeDialog from "@/components/ViewRecipeDialog.vue";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
 import { ref } from "vue";
@@ -53,11 +53,18 @@ defineProps({
   },
 });
 
-const isDialogVisible = ref(false);
+const isViewDialogVisible = ref(false);
+
+
 
 const onViewRecipeURLClick = (url) => {
   window.open(url, "_blank");
 };
+
+const onUpdateVisibility = () => {
+  console.log('onUpdateVisibility')
+}
+
 </script>
 
 <style lang="scss" scoped>

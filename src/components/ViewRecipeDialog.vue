@@ -1,25 +1,18 @@
 <template>
   <Dialog
     :visible="visible"
-    pt:root:class="!border-0 !bg-transparent"
-    pt:mask:class="backdrop-blur-sm"
-    class="reicpe-dialog lg:w-2/3 w-full p-4"
+    :closable="false"
+    pt:root:class="!border-0 "
+    pt:mask:class="backdrop-blur-lg"
+    class="reicpe-dialog lg:w-2/3 w-full"
     modal
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    header="Recipe"
-    style="
-      background-image: radial-gradient(
-        circle at left top,
-        var(--p-primary-400),
-        var(--p-primary-700)
-      );
-    "
+    :header="recipe.fields.title"
   >
-    <div
-      class="flex flex-col px-8 py-8 gap-6 rounded-2xl"
-    >
+    <div class="flex flex-col gap-6 rounded-2xl">
       <div class="mx-auto my-auto place-items-center">
         <img
+          class="lg:w-80 w-1/2"
           :src="
             recipe.fields.image
               ? recipe.fields.image[0].url
@@ -29,11 +22,14 @@
         />
       </div>
       <div class="content flex flex-col gap-2">
-        <span class="font-extrabold underline text-lg">Ingredients</span>
+        <span class="font-extrabold underline lg:text-lg title">Ingredients</span>
         <span>{{ recipe.fields.ingredients }}</span>
-        <span class="font-extrabold underline text-lg">Steps</span>
-        <p v-for="(step, index) in recipe.fields.steps.split('.')" :key="index">
+        <span class="font-extrabold underline lg:text-lg title">Steps</span>
+        <!-- <p v-for="(step, index) in recipe.fields.steps.split('.')" :key="index">
           {{ step.trim() }}.
+        </p> -->
+        <p class="preserve-lines">
+          {{ recipe.fields.steps }}
         </p>
       </div>
       <div class="flex items-center gap-4">
@@ -47,7 +43,6 @@
         <Button
           label="Close"
           @click="$emit('close')"
-          
           class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
         ></Button>
       </div>
@@ -60,6 +55,8 @@ import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import { ref } from "vue";
+
+defineEmits(["close", "update:visible"]);
 
 defineProps({
   visible: {
@@ -76,6 +73,15 @@ defineProps({
 <style lang="scss" scoped>
 img {
   width: 20rem;
-  height: 20rem;
+  border-radius: 6px;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.preserve-lines {
+  /* respeta saltos de línea, pero colapsa espacios extra */
+  white-space: pre-line;
 }
 </style>

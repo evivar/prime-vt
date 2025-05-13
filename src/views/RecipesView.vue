@@ -8,7 +8,9 @@
           class="lg:w-[80%] w-full"
           placeholder="Search recipes"
         ></InputText>
-        <Button class="lg:w-[20%] w-full">New recipe</Button>
+        <Button class="lg:w-[20%] w-full" @click="isCreateDialogVisible = true"
+          >New recipe</Button
+        >
       </div>
       <DataView
         :value="recipes"
@@ -19,7 +21,11 @@
       >
         <template #list="recipes">
           <div class="flex flex-col gap-2">
-            <RecipeCard v-for="(item, index) in recipes.items" :key="index" :recipe="item" />
+            <RecipeCard
+              v-for="(item, index) in recipes.items"
+              :key="index"
+              :recipe="item"
+            />
           </div>
         </template>
       </DataView>
@@ -27,10 +33,17 @@
         <span class="pi pi-spin pi-spinner-dotted"></span>
       </div>
     </Panel>
+
+    <CreateRecipeDialog
+      :visible="isCreateDialogVisible"
+      @close="isCreateDialogVisible = false"
+      @save="onSaveRecipe"
+    />
   </main>
 </template>
 
 <script setup>
+import CreateRecipeDialog from "@/components/CreateRecipeDialog.vue";
 import Panel from "primevue/panel";
 import MenuCard from "@/components/MenuCard.vue";
 import InputText from "primevue/inputtext";
@@ -50,6 +63,8 @@ const toast = useToast();
 const recipes = ref([]);
 const isInitializing = ref(false);
 const recipeQuery = ref(null);
+
+const isCreateDialogVisible = ref(false);
 
 onMounted(async () => {
   isInitializing.value = true;
@@ -90,6 +105,33 @@ const onSearchRecipe = () => {
     );
   } else {
     initRecipes();
+  }
+};
+
+const onSaveRecipe = async (newRecipe) => {
+  console.log("onSaveRecipe");
+  console.log("newRecipe", newRecipe);
+  const response = await axios.post(
+    "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ",
+    newRecipe
+  );
+  console.log("response", response);
+  if (response.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Recipe added",
+      detail: "Recipe added successfully",
+      life: 3000,
+    });
+    isCreateDialogVisible.value = false;
+    await initRecipes();
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error adding recipe",
+      detail: "Try again later",
+      life: 3000,
+    });
   }
 };
 </script>
