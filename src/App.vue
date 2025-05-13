@@ -1,11 +1,14 @@
 <template>
-  <Menubar class="menu-bar flex flex-col" :model="items">
+  <Menubar class="menu-bar flex flex-row" :model="items">
     <template #start>
       <img src="@/assets/myhomeplanner.png" alt="logo" class="lg:w-40 w-38 p-4" />
     </template>
   </Menubar>
   <RouterView />
-  <Toast class="custom-toast" position="bottom-right" />
+  <Toast
+    class="!w-80 custom-toast"
+    position="bottom-right"
+  />
 </template>
 
 <script setup>
@@ -42,14 +45,14 @@ const items = ref([
   border-left: none;
   border-right: none;
   border-radius: 0;
-  // justify-content: space-between;
-  justify-content: center;
+  justify-content: space-between;
+  // justify-content: center;
   position: sticky;
   top: 0;
   z-index: 2;
 }
 
-.custom-toast{
-  width: 20rem!important;
+.p-toast {
+  width: 20rem !important;
 }
 </style>
