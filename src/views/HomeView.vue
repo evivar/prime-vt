@@ -7,14 +7,14 @@
       :collapsed="isMobile ? true : false"
     >
       <div v-if="!isInitializing" class="home-menu grid lg:grid-cols-2 grid-cols-1 gap-2">
-        <menu-card
+        <MenuCard
           v-for="day in weeklyMenu"
           :key="day.id"
           :title="day.fields.dayName"
           :day="day.fields"
           :uuid="day.id"
           @update-menu-day="onSaveMenuDay"
-        ></menu-card>
+        ></MenuCard>
       </div>
       <div v-else class="text-center p-4">
         <span class="pi pi-spin pi-spinner-dotted"></span>
@@ -34,19 +34,19 @@
       </div>
       <ScrollPanel
         v-if="!isInitializing"
-        style="width: 100%; height: calc(100dvh - 128px); margin-top: 1rem"
+        style="width: 100%; height: calc(100dvh - 200px); margin-top: 1rem"
       >
-        <div
-          class="shopping-list-item flex flex-row content-between items-center"
+        <div v-if="shoppingList.length === 0" class="text-center">
+          Start adding items to your shopping list
+        </div>
+        <SwipeToDelete
+          v-else
           v-for="item in shoppingList"
+          :item="item"
           :key="item.id"
           @click="onPurchaseClick(item)"
-        >
-          <span class="w-full" :class="{ purchased: item.fields.purchased }">
-            {{ item.fields.name }}
-          </span>
-          <span class="pi pi-trash" @click.stop="onDeleteClick(item.id)"> </span>
-        </div>
+          @delete-item="onDeleteClick(item.id)"
+        />
       </ScrollPanel>
       <div v-else class="text-center p-4">
         <span class="pi pi-spin pi-spinner-dotted"></span>
@@ -57,13 +57,16 @@
 
 <script setup>
 import Panel from "primevue/panel";
-import MenuCard from "@/components/MenuCard.vue";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import ScrollPanel from "primevue/scrollpanel";
+import SwipeToDelete from "@/components/SwipeToDelete.vue";
+import MenuCard from "@/components/MenuCard.vue";
 import { onMounted, onUnmounted, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
 import axios from "axios";
+const toast = useToast();
 
 const isMobile = ref(false);
 const isInitializing = ref(false);
@@ -77,7 +80,6 @@ const checkIfMobile = () => {
 };
 
 onMounted(async () => {
-  console.log("onMounted");
   checkIfMobile();
   window.addEventListener("resize", checkIfMobile);
   isInitializing.value = true;
@@ -87,60 +89,97 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  console.log("onUnmounted");
   window.removeEventListener("resize", checkIfMobile);
 });
 
 const initMenu = async () => {
-  console.log("initMenu");
   const response = await axios.get(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblVtMlqTf5B1REPb?sort%5B0%5D%5Bfield%5D=id&sort%5B0%5D%5Bdirection%5D=asc"
   );
-  console.log("response menu", response);
-  weeklyMenu.value = response.data.records;
+
+  if (response.status === 200) {
+    weeklyMenu.value = response.data.records;
+    toast.add({
+      severity: "success",
+      summary: "Menu intialized",
+      detail: "Weekly menu initialized successfully",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error initializing weekly menu",
+      detail: "Try again later",
+      life: 3000,
+    });
+  }
 };
 
 const initShoppingList = async () => {
-  console.log("initShoppingList");
   const response = await axios.get(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblMIs2AMHxiMOOPn?pageSize=100&sort%5B0%5D%5Bfield%5D=createdTime&sort%5B0%5D%5Bdirection%5D=desc"
   );
-  console.log("response", response);
-  response.data.records.forEach((record) => {
-    record.fields.purchased = record.fields.purchased ? record.fields.purchased : false;
-    shoppingList.value.push(record);
-  });
-  console.log("shoppingList", shoppingList.value);
+
+  if (response.status === 200) {
+    response.data.records.forEach((record) => {
+      record.fields.purchased = record.fields.purchased ? record.fields.purchased : false;
+      shoppingList.value.push(record);
+    });
+    toast.add({
+      severity: "success",
+      summary: "Shopping list intialized",
+      detail: "Shopping list initialized successfully",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error initializing shopping list",
+      detail: "Try again later",
+      life: 3000,
+    });
+  }
 };
 
 const onAddItem = async () => {
-  console.log("onAddItem");
   if (newItem.value) {
     isAdding.value = true;
     const response = await axios.post(
       "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblMIs2AMHxiMOOPn",
       { fields: { name: newItem.value, purchased: false } }
     );
-    console.log("response", response);
-    shoppingList.value.unshift(response.data);
+    if (response.status === 200) {
+      shoppingList.value.unshift(response.data);
+      toast.add({
+        severity: "success",
+        summary: "Item added",
+        detail: "Item added to shopping list",
+        life: 3000,
+      });
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error adding item",
+        detail: "Try again later",
+        life: 3000,
+      });
+    }
     newItem.value = null;
     isAdding.value = false;
   }
 };
 
 const onDeleteClick = async (itemId) => {
-  console.log("onDeleteClick");
   const response = await axios.delete(
     `https://api.airtable.com/v0/appK13ISOZy5bznU1/tblMIs2AMHxiMOOPn/${itemId}`
   );
-  console.log("response", response);
+
   if (response.status === 200) {
     shoppingList.value = shoppingList.value.filter((item) => item.id !== itemId);
   }
 };
 
 const onPurchaseClick = async (item) => {
-  console.log("onPurchaseClick");
   delete item.fields.uuid;
   delete item.fields.createdTime;
   const response = await axios.put(
@@ -160,7 +199,6 @@ const onPurchaseClick = async (item) => {
 };
 
 const onSaveMenuDay = async (menuDay) => {
-  console.log("onSaveMenuDay", menuDay);
   const response = await axios.put(
     `https://api.airtable.com/v0/appK13ISOZy5bznU1/tblVtMlqTf5B1REPb/${menuDay.id}`,
     {
@@ -171,7 +209,6 @@ const onSaveMenuDay = async (menuDay) => {
     }
   );
   if (response.status === 200) {
-    console.log("200");
     weeklyMenu.value = weeklyMenu.value.map((day) => {
       if (day.id === menuDay.id) {
         day.fields.meal = menuDay.meal;
@@ -179,8 +216,20 @@ const onSaveMenuDay = async (menuDay) => {
       }
       return day;
     });
+    toast.add({
+      severity: "success",
+      summary: `${day.fields.dayName} menu updated`,
+      detail: "Weekly menu updated successfully",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error updating weekly menu",
+      detail: "Try again later",
+      life: 3000,
+    });
   }
-  console.log("response", response);
 };
 </script>
 

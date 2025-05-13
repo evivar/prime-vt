@@ -1,75 +1,163 @@
 <template>
-  <main
-    class="recipes lg:flex p-4 hidden flex-row gap-4 lg:flex-nowrap flex-wrap-reverse"
-  >
-    <Panel header="Recipes" class="lg:w-1/3 w-full">
-      <ScrollPanel class="recipes-scroll" style="height: calc(100vh - 104px);">
-        <div class="recipes-list">
-          <!-- Mostrar las recetas -->
-          <div v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
-            <span>{{ recipe.fields.Name }}</span> <!-- Cambia esto según los campos que uses -->
+  <main class="home p-4 flex flex-row gap-4 lg:flex-nowrap flex-wrap">
+    <Panel class="w-full" header="Recipes">
+      <div class="flex lg:flex-row flex-col gap-4 w-full">
+        <InputText
+          v-model="recipeQuery"
+          @input="onSearchRecipe"
+          class="lg:w-[80%] w-full"
+          placeholder="Search recipes"
+        ></InputText>
+        <Button class="lg:w-[20%] w-full">New recipe</Button>
+      </div>
+      <DataView
+        :value="recipes"
+        paginator
+        :rows="10"
+        v-if="!isInitializing"
+        style="width: 100%; margin-top: 1rem"
+      >
+        <template #list="recipes">
+          <div class="flex flex-col gap-2">
+            <RecipeCard v-for="(item, index) in recipes.items" :key="index" :recipe="item" />
+            <!-- <div v-for="(item, index) in recipes.items" :key="index">
+                <MenuCard />
+              <div
+                class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
+                :class="{
+                  'border-t border-surface-200 dark:border-surface-700': index !== 0,
+                }"
+              >
+                <div class="md:w-40 relative">
+                  <img
+                  v-if="item.fields.image"
+                    class="block xl:block mx-auto rounded w-full"
+                    :src="`${item.fields.image[0].url}`"
+                    :alt="item.fields.title"
+                  />
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6"
+                >
+                  <div
+                    class="flex flex-row md:flex-col justify-between items-start gap-2"
+                  >
+                    <div>
+                      <div class="text-lg font-medium mt-2">{{ item.fields.title}}</div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col md:items-end gap-8">
+                    <div class="flex flex-row-reverse md:flex-row gap-2">
+                      <Button
+                        icon="pi pi-eye"
+                        label="View recipe"
+                        class="flex-auto md:flex-initial whitespace-nowrap"
+                      ></Button>
+                    </div>
+                  </div>
+              </div>
+            </div> -->
           </div>
-        </div>
-      </ScrollPanel>
-    </Panel>
-    <Panel
-      :header="selectedRecipe ? selectedRecipe.name : 'New recipe'"
-      class="shopping-list-panel lg:w-2/3 w-full"
-    >
-      <span>La receta</span>
+        </template>
+      </DataView>
+      <div v-else class="text-center p-4">
+        <span class="pi pi-spin pi-spinner-dotted"></span>
+      </div>
     </Panel>
   </main>
 </template>
 
 <script setup>
 import Panel from "primevue/panel";
+import MenuCard from "@/components/MenuCard.vue";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 import ScrollPanel from "primevue/scrollpanel";
-import { onMounted, ref } from "vue";
-import axios from "axios";
+import SwipeToDelete from "@/components/SwipeToDelete.vue";
+import NewRecipe from "@/components/NewRecipe.vue";
+import DataView from "primevue/dataview";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
-const selectedRecipe = ref(null);
+import axios from "axios";
+import RecipeCard from "@/components/RecipeCard.vue";
+
+const toast = useToast();
+
 const recipes = ref([]);
+const isInitializing = ref(false);
+const recipeQuery = ref(null);
 
 onMounted(async () => {
-  console.log("onMounted");
+  isInitializing.value = true;
+  await initRecipes();
+  isInitializing.value = false;
+});
+
+const initRecipes = async () => {
   const response = await axios.get(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ?sort%5B0%5D%5Bfield%5D=created&sort%5B0%5D%5Bdirection%5D=desc"
   );
-  console.log("response", response);
-  recipes.value = response.data.records;
-});
+  if (response.status === 200) {
+    recipes.value = response.data.records;
+
+    toast.add({
+      severity: "success",
+      summary: "Recipes initialized",
+      detail: "Recipe list initialized successfully",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error fetching recipes",
+      detail: "Try again later",
+      life: 3000,
+    });
+    return;
+  }
+};
+
+const onSearchRecipe = () => {
+  console.log("onSearchRecipe");
+  console.log(recipeQuery.value);
+  if (recipeQuery.value) {
+    recipes.value = recipes.value.filter((recipe) =>
+      recipe.fields.title.toLowerCase().includes(recipeQuery.value.toLowerCase())
+    );
+  } else {
+    initRecipes();
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-.recipes {
+.home {
   padding: 1rem;
   height: 100%;
-  min-height: calc(100vh - 104px);
-  &--list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    &--items {
-      border: 1px solid #3c3c3c4a;
-      padding: 1rem;
-    }
+  & > .shopping-list-panel {
+    // height: 100%;
   }
 }
 
-.recipes-scroll {
-  height: calc(100vh - 104px); /* Asegúrate de que ocupe todo el espacio disponible dentro del Panel */
-}
-
-.recipe-item {
-  height: 48px;
+.shopping-list-item {
+  border: 1px solid #3c3c3c4a;
+  border-radius: 6px;
   padding: 1rem;
-  border: 1px solid #ccc;
-  margin-bottom: 8px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.p-scrollpanel-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.purchased {
+  text-decoration: line-through;
+}
+
+.pi-spinner-dotted {
+  font-size: xx-large;
+}
+
+#add-btn > span {
+  font-weight: 900;
 }
 </style>

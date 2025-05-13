@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import ToastService  from 'primevue/toastservice';
 
 import axios from 'axios';
 
@@ -24,5 +25,6 @@ app.use(PrimeVue, {
         preset: Aura
     }
 });
+app.use(ToastService);
 
 app.mount('#app')

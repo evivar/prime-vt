@@ -1,36 +1,38 @@
 <template>
-  <Menubar class="menu-bar" :model="items">
+  <Menubar class="menu-bar flex flex-col" :model="items">
     <template #start>
-      <img src="@/assets/logo.png" alt="logo" class="lg:w-22 w-30" />
+      <img src="@/assets/myhomeplanner.png" alt="logo" class="lg:w-40 w-38 p-4" />
     </template>
   </Menubar>
   <RouterView />
+  <Toast class="custom-toast" position="bottom-right" />
 </template>
 
 <script setup>
 import Menubar from "primevue/menubar";
 import { RouterLink, RouterView } from "vue-router";
+import Toast from "primevue/toast";
 import { ref } from "vue";
 
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const items = ref([
-  // {
-  //   label: "Home",
-  //   icon: "pi pi-home",
-  //   command: () => {
-  //     router.push("/");
-  //   },
-  // },
-  // {
-  //   label: "Recipes",
-  //   icon: "pi pi-book",
-  //   command: () => {
-  //     router.push("/recipes");
-  //   },
-  // },
+  {
+    label: "Home",
+    icon: "pi pi-home",
+    command: () => {
+      router.push("/");
+    },
+  },
+  {
+    label: "Recipes",
+    icon: "pi pi-book",
+    command: () => {
+      router.push("/recipes");
+    },
+  },
 ]);
 </script>
 
@@ -45,5 +47,9 @@ const items = ref([
   position: sticky;
   top: 0;
   z-index: 2;
+}
+
+.custom-toast{
+  width: 20rem!important;
 }
 </style>
