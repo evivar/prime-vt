@@ -18,4 +18,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+   // Cada vez que hagas `npm run build`, los archivos irán a cordova/www
+   outputDir: 'cordova/www',
+   publicPath: './'
 })
