@@ -7,26 +7,32 @@
     class="reicpe-dialog lg:w-2/3 w-full"
     modal
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    header="New recipe"
   >
+    <template #header>
+      <div class="inline-flex items-center justify-between w-full gap-4">
+        <span class="font-bold whitespace-nowrap">New recipe</span>
+        <div class="flex items-center gap-2">
+          <span>URL</span>
+          <ToggleSwitch v-model="isURL" />
+        </div>
+      </div>
+    </template>
     <div class="flex flex-col gap-6 rounded-2xl">
-      <div class="flex lg:flex-row flex-col gap-4">
-        <!-- <span class="lg:invisible visible">Image</span> -->
-        <!-- <FileUpload
-          class="flex-no-wrap"
-          ref="fileupload"
-          mode="basic"
-          name="image"
-          accept="image/*"
-          :maxFileSize="1000000"
-        /> -->
-        <InputText v-model="title" class="lg:w-full w-full" placeholder="Recipe title" />
+      <div class="flex lg:flex-col flex-col gap-4">
+        <InputText :invalid="!title" v-model="title" class="w-full" placeholder="Recipe title" />
       </div>
       <Divider />
-      <span>Ingredients</span>
-      <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+      <span v-if="isURL">URL</span>
+      <InputText v-if="isURL" v-model="url" class="w-full" placeholder="Recipe URL" />
+      <span v-if="!isURL">Ingredients</span>
+      <div v-if="!isURL" class="grid lg:grid-cols-2 grid-cols-1 gap-4">
         <IconField v-for="(ingredient, idx) in ingredients" :key="idx">
-          <InputText placeholder="Ingredient" v-model="ingredients[idx]" class="w-full" />
+          <InputText
+            placeholder="Ingredient"
+            v-model="ingredients[idx]"
+            class="w-full"
+            required
+          />
           <InputIcon
             class="pi pi-times cursor-pointer"
             @click="ingredients.splice(idx, 1)"
@@ -34,13 +40,14 @@
         </IconField>
       </div>
       <Button
+        v-if="!isURL"
         label="Add ingredient"
         @click="ingredients.push(null)"
         class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
       ></Button>
-      <Divider />
-      <span>Steps</span>
-      <Textarea v-model="steps" rows="10" />
+      <Divider v-if="!isURL" />
+      <span v-if="!isURL">Steps</span>
+      <Textarea v-if="!isURL" v-model="steps" rows="10" />
       <div class="flex items-center gap-4">
         <Button
           v-if="false"
@@ -72,8 +79,9 @@ import InputText from "primevue/inputtext";
 import FileUpload from "primevue/fileupload";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
-import Textarea  from "primevue/textarea";
-import { ref } from "vue";
+import Textarea from "primevue/textarea";
+import ToggleSwitch from "primevue/toggleswitch";
+import { onUnmounted, ref } from "vue";
 
 const emit = defineEmits(["close", "save"]);
 
@@ -86,22 +94,43 @@ defineProps({
 
 const image = ref(null);
 const title = ref(null);
-const ingredients = ref([null, null]);
+const isURL = ref(false);
+const ingredients = ref([]);
 const steps = ref("");
+const fileupload = ref();
+const url = ref(null);
+
+onUnmounted(() => {
+  title.value = null;
+  isURL.value = false;
+  ingredients.value = [];
+  steps.value = "";
+  url.value = null;
+});
+
+const upload = () => {
+  fileupload.value.upload();
+};
 
 const onSaveClick = () => {
   const newRecipe = {
     records: [
       {
         fields: {
-          image: image.value,
           title: title.value,
           ingredients: ingredients.value.toString(),
           steps: steps.value,
+          url: isURL.value ? url.value : null,
         },
       },
     ],
   };
+
+  title.value = null;
+  isURL.value = false;
+  ingredients.value = [];
+  steps.value = "";
+  url.value = null;
   emit("save", newRecipe);
 };
 </script>
