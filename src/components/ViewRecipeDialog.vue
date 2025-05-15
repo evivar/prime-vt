@@ -22,12 +22,15 @@
         />
       </div>
       <div class="content flex flex-col gap-2">
-        <span class="font-extrabold underline lg:text-lg title">Ingredients</span>
+        <div class="flex lg:flex-row flex-row justify-between">
+          <span class="font-extrabold underline lg:text-lg title">Ingredients</span>
+          <Button :disabled="recipe.fields.ingredients?.length !== 0" size="small" @click="onAddToShoppingListClick">
+            <span class="lg:flex hidden">Add to shoping list</span>
+            <i class=" pi pi-cart-plus"></i>
+          </Button>
+        </div>
         <span>{{ recipe.fields.ingredients }}</span>
         <span class="font-extrabold underline lg:text-lg title">Steps</span>
-        <!-- <p v-for="(step, index) in recipe.fields.steps.split('.')" :key="index">
-          {{ step.trim() }}.
-        </p> -->
         <p class="preserve-lines">
           {{ recipe.fields.steps }}
         </p>

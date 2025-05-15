@@ -66,7 +66,10 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import axios from "axios";
+import { useShoppingListStore } from "@/stores/shoppingList";
 const toast = useToast();
+
+const shoppingListStore = useShoppingListStore();
 
 const isMobile = ref(false);
 const isInitializing = ref(false);
@@ -124,6 +127,7 @@ const initShoppingList = async () => {
     response.data.records.forEach((record) => {
       record.fields.purchased = record.fields.purchased ? record.fields.purchased : false;
       shoppingList.value.push(record);
+      shoppingListStore.shoppingList.push(record);
     });
     toast.add({
       severity: "success",
@@ -150,6 +154,7 @@ const onAddItem = async () => {
     );
     if (response.status === 200) {
       shoppingList.value.unshift(response.data);
+      shoppingListStore.shoppingList.unshift(response.data);
       toast.add({
         severity: "success",
         summary: "Item added",
@@ -176,6 +181,7 @@ const onDeleteClick = async (itemId) => {
 
   if (response.status === 200) {
     shoppingList.value = shoppingList.value.filter((item) => item.id !== itemId);
+    shoppingListStore.shoppingList = shoppingListStore.shoppingList.filter((item) => item.id !== itemId);
   }
 };
 
@@ -190,6 +196,12 @@ const onPurchaseClick = async (item) => {
   );
   if (response.status === 200) {
     shoppingList.value = shoppingList.value.map((i) => {
+      if (i.id === item.id) {
+        i.fields.purchased = !item.fields.purchased;
+      }
+      return i;
+    });
+    useShoppingListStore.shoppingList = useShoppingListStore.shoppingList.map((i) => {
       if (i.id === item.id) {
         i.fields.purchased = !item.fields.purchased;
       }

@@ -18,25 +18,36 @@
         </div>
       </div>
       <div class="flex flex-col md:items-end gap-8">
-        <div class="flex flex-row md:flex-row gap-2">
+        <div class="flex flex-col md:flex-col gap-2">
           <Button
-          v-if="recipe.fields.url"
+            v-if="recipe.fields.url"
             icon="pi pi-eye"
             label="View recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
             @click="onViewRecipeURLClick(recipe.fields.url)"
           ></Button>
           <Button
-          v-else
+            v-else
             icon="pi pi-eye"
             label="View recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
             @click="isViewDialogVisible = true"
           ></Button>
+          <Button
+            icon="pi pi-trash"
+            severity="secondary"
+            label="Delete recipe"
+            class="flex-auto md:flex-initial whitespace-nowrap"
+            @click="onDeleteRecipeClick"
+          ></Button>
         </div>
       </div>
     </div>
-    <ViewRecipeDialog :visible="isViewDialogVisible" @close="isViewDialogVisible=false" @update:visible="onUpdateVisibility" :recipe="recipe"/>
+    <ViewRecipeDialog
+      :visible="isViewDialogVisible"
+      @close="isViewDialogVisible = false"
+      :recipe="recipe"
+    />
   </div>
 </template>
 
@@ -44,7 +55,9 @@
 import ViewRecipeDialog from "@/components/ViewRecipeDialog.vue";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
+
+const emit = defineEmits(["deleteRecipe"]);
 
 defineProps({
   recipe: {
@@ -55,16 +68,13 @@ defineProps({
 
 const isViewDialogVisible = ref(false);
 
-
-
 const onViewRecipeURLClick = (url) => {
   window.open(url, "_blank");
 };
 
-const onUpdateVisibility = () => {
-  console.log('onUpdateVisibility')
-}
-
+const onDeleteRecipeClick = () => {
+  emit("deleteRecipe")
+};
 </script>
 
 <style lang="scss" scoped>

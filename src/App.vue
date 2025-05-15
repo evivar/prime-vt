@@ -1,14 +1,13 @@
 <template>
   <Menubar class="menu-bar flex flex-row" :model="items">
     <template #start>
-      <img src="@/assets/myhomeplanner.png" alt="logo" class="lg:w-40 w-38 p-4" />
+      <router-link to="/">
+        <img src="@/assets/myhomeplanner.png" alt="logo" class="lg:w-40 w-38 p-4" />
+      </router-link>
     </template>
   </Menubar>
   <RouterView />
-  <Toast
-    class="!w-80 custom-toast"
-    position="bottom-right"
-  />
+  <Toast class="!w-80 custom-toast" position="bottom-right" />
 </template>
 
 <script setup>

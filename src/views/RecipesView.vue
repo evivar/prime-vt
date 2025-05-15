@@ -25,6 +25,7 @@
               v-for="(item, index) in recipes.items"
               :key="index"
               :recipe="item"
+              @delete-recipe="onDeleteRecipe(item.id, index)"
             />
           </div>
         </template>
@@ -109,13 +110,10 @@ const onSearchRecipe = () => {
 };
 
 const onSaveRecipe = async (newRecipe) => {
-  console.log("onSaveRecipe");
-  console.log("newRecipe", newRecipe);
   const response = await axios.post(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ",
     newRecipe
   );
-  console.log("response", response);
   if (response.status === 200) {
     toast.add({
       severity: "success",
@@ -129,6 +127,30 @@ const onSaveRecipe = async (newRecipe) => {
     toast.add({
       severity: "error",
       summary: "Error adding recipe",
+      detail: "Try again later",
+      life: 3000,
+    });
+  }
+};
+
+const onDeleteRecipe = async (recipeId, idx) => {
+  console.log("onDeleteRecipe");
+  console.log(recipeId);
+  const response = await axios.delete(
+    `https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ/${recipeId}`
+  );
+  if (response.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Recipe deleted",
+      detail: "Recipe deleted successfully",
+      life: 3000,
+    });
+    recipes.value.splice(idx, 1);
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error deleting recipe",
       detail: "Try again later",
       life: 3000,
     });

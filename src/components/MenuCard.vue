@@ -1,6 +1,8 @@
 <template>
   <Card class="h-full border">
-    <template #subtitle>{{ title }}</template>
+    <template #subtitle
+      ><span class="subtitle">{{ title }}</span></template
+    >
     <template #content>
       <div class="menu-card--content flex flex-col gap-4">
         <span v-if="!isEditing">{{ day.meal ? day.meal : "-" }}</span>
@@ -32,7 +34,13 @@
           class="w-1/2"
           @click="onCancelClick"
         />
-        <Button v-if="!isEditing" size="small" label="Edit" class="w-full" @click="onEditClick" />
+        <Button
+          v-if="!isEditing"
+          size="small"
+          label="Edit"
+          class="w-full"
+          @click="onEditClick"
+        />
         <Button v-else size="small" label="Save" class="w-1/2" @click="onSaveClick" />
       </div>
     </template>
@@ -91,5 +99,9 @@ const onSaveClick = () => {
 <style lang="scss" scoped>
 .border {
   border: 1px solid #3c3c3c4a;
+}
+
+.subtitle {
+  font-weight: 700 !important;
 }
 </style>

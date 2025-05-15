@@ -1,7 +1,7 @@
 <template>
   <Dialog
     :visible="visible"
-    :closable="true"
+    :closable="false"
     pt:root:class="!border-0 "
     pt:mask:class="backdrop-blur-lg"
     class="reicpe-dialog lg:w-2/3 w-full"
@@ -19,13 +19,13 @@
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
       <div class="flex lg:flex-col flex-col gap-4">
-        <InputText :invalid="!title" v-model="title" class="w-full" placeholder="Recipe title" />
+        <InputText v-model="title" class="w-full" placeholder="Recipe title" />
       </div>
       <Divider />
       <span v-if="isURL">URL</span>
       <InputText v-if="isURL" v-model="url" class="w-full" placeholder="Recipe URL" />
       <span v-if="!isURL">Ingredients</span>
-      <div v-if="!isURL" class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+      <div v-if="!isURL && ingredients.length !== 0" class="grid lg:grid-cols-2 grid-cols-1 gap-4">
         <IconField v-for="(ingredient, idx) in ingredients" :key="idx">
           <InputText
             placeholder="Ingredient"
@@ -62,6 +62,7 @@
           class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
         ></Button>
         <Button
+          disabled="!title || (isURL && !url) || (!isURL && ingredients.length === 0 && !steps)"
           label="Save"
           @click="onSaveClick"
           class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
