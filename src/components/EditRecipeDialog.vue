@@ -11,21 +11,29 @@
     <template #header>
       <div class="inline-flex items-center justify-between w-full gap-4">
         <span class="font-bold whitespace-nowrap">New recipe</span>
-        <div class="flex items-center gap-2">
-          <span>URL</span>
-          <ToggleSwitch v-model="isURL" />
-        </div>
       </div>
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
       <div class="flex lg:flex-col flex-col gap-4">
-        <InputText v-model="title" class="w-full" placeholder="Recipe title" />
+        <InputText
+          v-model="recipe.fields.title"
+          class="w-full"
+          placeholder="Recipe title"
+        />
       </div>
       <Divider />
-      <span v-if="isURL">URL</span>
-      <InputText v-if="isURL" v-model="url" class="w-full" placeholder="Recipe URL" />
-      <span v-if="!isURL">Ingredients</span>
-      <div v-if="!isURL && ingredients.length !== 0" class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+      <span v-if="recipe.fields.url">URL</span>
+      <InputText
+        v-if="recipe.fields.url"
+        v-model="recipe.fields.url"
+        class="w-full"
+        placeholder="Recipe URL"
+      />
+      <span v-if="!recipe.fields.url">Ingredients</span>
+      <div
+        v-if="!recipe.fields.url && ingredients.length !== 0"
+        class="grid lg:grid-cols-2 grid-cols-1 gap-4"
+      >
         <IconField v-for="(ingredient, idx) in ingredients" :key="idx">
           <InputText
             placeholder="Ingredient"
@@ -40,14 +48,14 @@
         </IconField>
       </div>
       <Button
-        v-if="!isURL"
+        v-if="!recipe.fields.url"
         label="Add ingredient"
         @click="ingredients.push(null)"
         class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
       ></Button>
-      <Divider v-if="!isURL" />
-      <span v-if="!isURL">Steps</span>
-      <Textarea v-if="!isURL" v-model="steps" rows="10" />
+      <Divider v-if="!recipe.fields.url" />
+      <span v-if="!recipe.fields.url">Steps</span>
+      <Textarea v-if="!recipe.fields.url" v-model="recipe.fields.steps" rows="10" />
       <div class="flex items-center gap-4">
         <Button
           v-if="false"
@@ -62,7 +70,6 @@
           class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
         ></Button>
         <Button
-          :disabled="!title || (isURL ? !url : !steps)"
           label="Save"
           @click="onSaveClick"
           class="w-full !bg-transparent !text-primary-50 !text-white !border !border-white/30 hover:!bg-white/10"
@@ -82,57 +89,58 @@ import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Textarea from "primevue/textarea";
 import ToggleSwitch from "primevue/toggleswitch";
-import { onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
+import axios from "axios";
+import { useToast } from "primevue/usetoast";
 
-const emit = defineEmits(["close", "save"]);
+const emit = defineEmits(["close", "update"]);
 
-defineProps({
+const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
   },
+  recipe: {
+    type: Object,
+    required: true,
+  },
 });
 
-const image = ref(null);
-const title = ref(null);
-const isURL = ref(false);
-const ingredients = ref([]);
-const steps = ref("");
-const fileupload = ref();
-const url = ref(null);
+const toast = useToast();
+const ingredients = ref(
+  props.recipe.fields.ingredients?.length > 0
+    ? props.recipe.fields.ingredients.split(",").map((item) => item.trim())
+    : []
+);
 
-onUnmounted(() => {
-  title.value = null;
-  isURL.value = false;
-  ingredients.value = [];
-  steps.value = "";
-  url.value = null;
-});
-
-const upload = () => {
-  fileupload.value.upload();
-};
-
-const onSaveClick = () => {
-  const newRecipe = {
-    records: [
-      {
-        fields: {
-          title: title.value,
-          ingredients: ingredients.value.toString(),
-          steps: steps.value,
-          url: isURL.value ? url.value : null,
-        },
+const onSaveClick = async () => {
+  const response = await axios.patch(
+    `https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ/${props.recipe.id}`,
+    {
+      fields: {
+        title: props.recipe.fields.title,
+        url: props.recipe.fields.url ? props.recipe.fields.url : null,
+        ingredients: ingredients.value.toString(),
+        steps: props.recipe.fields.steps,
       },
-    ],
-  };
-
-  title.value = null;
-  isURL.value = false;
-  ingredients.value = [];
-  steps.value = "";
-  url.value = null;
-  emit("save", newRecipe);
+    }
+  );
+  if (response.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Recipe updated",
+      detail: "Recipe updated successfully",
+      life: 3000,
+    });
+    emit("update");
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error editing recipe",
+      detail: "Try again later",
+      life: 3000,
+    });
+  }
 };
 </script>
 

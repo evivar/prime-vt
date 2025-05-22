@@ -8,9 +8,9 @@
     >
       <div v-if="!isInitializing" class="home-menu grid lg:grid-cols-2 grid-cols-1 gap-2">
         <MenuCard
-          v-for="day in weeklyMenu"
+          v-for="day, idx in weeklyMenu"
           :key="day.id"
-          :title="day.fields.dayName"
+          :title="day.fields.dayName ? day.fields.dayName : daysOfWeek[idx]"
           :day="day.fields"
           :uuid="day.id"
           @update-menu-day="onSaveMenuDay"
@@ -77,6 +77,9 @@ const weeklyMenu = ref([]);
 const newItem = ref(null);
 const shoppingList = ref([]);
 const isAdding = ref(false);
+const daysOfWeek = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+];
 
 const checkIfMobile = () => {
   isMobile.value = window.innerWidth <= 1024; // Define "móvil" como ancho <= 768px

@@ -20,12 +20,13 @@
         style="width: 100%; margin-top: 1rem"
       >
         <template #list="recipes">
-          <div class="flex flex-col gap-2">
+          <div class="lg:grid lg:grid-cols-2 flex flex-col gap-2 py-2">
             <RecipeCard
               v-for="(item, index) in recipes.items"
               :key="index"
               :recipe="item"
               @delete-recipe="onDeleteRecipe(item.id, index)"
+              @update="onUpdateRecipe"
             />
           </div>
         </template>
@@ -98,8 +99,6 @@ const initRecipes = async () => {
 };
 
 const onSearchRecipe = () => {
-  console.log("onSearchRecipe");
-  console.log(recipeQuery.value);
   if (recipeQuery.value) {
     recipes.value = recipes.value.filter((recipe) =>
       recipe.fields.title.toLowerCase().includes(recipeQuery.value.toLowerCase())
@@ -134,8 +133,6 @@ const onSaveRecipe = async (newRecipe) => {
 };
 
 const onDeleteRecipe = async (recipeId, idx) => {
-  console.log("onDeleteRecipe");
-  console.log(recipeId);
   const response = await axios.delete(
     `https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ/${recipeId}`
   );
@@ -155,6 +152,10 @@ const onDeleteRecipe = async (recipeId, idx) => {
       life: 3000,
     });
   }
+};
+
+const onUpdateRecipe = async () => {
+  await initRecipes();
 };
 </script>
 

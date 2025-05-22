@@ -77,7 +77,6 @@ const dinner = ref(null);
 
 const onEditClick = () => {
   isEditing.value = !isEditing.value;
-  console.log("day", props.day);
   meal.value = props.day.meal;
   dinner.value = props.day.dinner;
 };

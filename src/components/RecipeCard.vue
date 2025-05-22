@@ -22,6 +22,7 @@
           <Button
             v-if="recipe.fields.url"
             icon="pi pi-eye"
+            size="small"
             label="View recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
             @click="onViewRecipeURLClick(recipe.fields.url)"
@@ -29,12 +30,22 @@
           <Button
             v-else
             icon="pi pi-eye"
+            size="small"
             label="View recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
             @click="isViewDialogVisible = true"
           ></Button>
           <Button
+            icon="pi pi-pencil"
+            size="small"
+            severity="secondary"
+            label="Edit recipe"
+            class="flex-auto md:flex-initial whitespace-nowrap"
+            @click="isEditDialogVisible = true"
+          ></Button>
+          <Button
             icon="pi pi-trash"
+            size="small"
             severity="secondary"
             label="Delete recipe"
             class="flex-auto md:flex-initial whitespace-nowrap"
@@ -48,16 +59,23 @@
       @close="isViewDialogVisible = false"
       :recipe="recipe"
     />
+    <EditRecipeDialog
+      :visible="isEditDialogVisible"
+      :recipe="recipe"
+      @close="isEditDialogVisible = false"
+      @update="onUpdateRecipe"
+      />
   </div>
 </template>
 
 <script setup>
 import ViewRecipeDialog from "@/components/ViewRecipeDialog.vue";
+import EditRecipeDialog from "@/components/EditRecipeDialog.vue";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
 import { ref, defineEmits } from "vue";
 
-const emit = defineEmits(["deleteRecipe"]);
+const emit = defineEmits(["deleteRecipe, update"]);
 
 defineProps({
   recipe: {
@@ -67,6 +85,7 @@ defineProps({
 });
 
 const isViewDialogVisible = ref(false);
+const isEditDialogVisible = ref(false);
 
 const onViewRecipeURLClick = (url) => {
   window.open(url, "_blank");
@@ -75,6 +94,13 @@ const onViewRecipeURLClick = (url) => {
 const onDeleteRecipeClick = () => {
   emit("deleteRecipe")
 };
+
+const onUpdateRecipe = () => {
+  isEditDialogVisible.value = false
+  emit("update");
+};
+
+
 </script>
 
 <style lang="scss" scoped>
