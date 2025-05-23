@@ -108,10 +108,25 @@ const onSearchRecipe = () => {
   }
 };
 
+// https://airtable.com/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ/viwtpXtcPwJYw1rWW/fldbQijgJSXRtU6mw
+
+const uploadImage = async (image) => {
+  console.log("img", image);
+  const response = await axios.post(
+    "https://airtable.com/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ/viwtpXtcPwJYw1rWW/fldbQijgJSXRtU6mw",
+    {
+      contentType: "image/jpeg, image/png",
+      file: image,
+      filename: "recipe image",
+    }
+  );
+  console.log("response", response);
+};
+
 const onSaveRecipe = async (newRecipe) => {
   const response = await axios.post(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ",
-    newRecipe
+    { records: newRecipe.records }
   );
   if (response.status === 200) {
     toast.add({
@@ -121,6 +136,9 @@ const onSaveRecipe = async (newRecipe) => {
       life: 3000,
     });
     isCreateDialogVisible.value = false;
+    if (newRecipe.image) {
+      await uploadImage(newRecipe.image);
+    }
     await initRecipes();
   } else {
     toast.add({

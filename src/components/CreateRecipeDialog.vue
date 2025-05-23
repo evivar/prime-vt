@@ -158,6 +158,7 @@ const onSaveClick = () => {
         },
       },
     ],
+    image: src.value ? src.value : null,
   };
 
   emit("save", newRecipe);
