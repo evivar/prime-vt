@@ -14,7 +14,25 @@
       </div>
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
-      <div class="flex lg:flex-col flex-col gap-4">
+      <div class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center">
+        <div class="flex flex-row items-center gap-2 w-full">
+          <FileUpload
+            mode="basic"
+            @select="onFileSelect"
+            customUpload
+            auto
+            severity="secondary"
+            class="p-button-outlined"
+            chooseLabel="Choose Image"
+          />
+          <img
+            v-if="src"
+            :src="src"
+            alt="Image"
+            class="shadow-md rounded-xl w-32 sm:w-64"
+            style="filter: grayscale(100%)"
+          />
+        </div>
         <InputText
           v-model="recipe.fields.title"
           class="w-full"
@@ -112,6 +130,18 @@ const ingredients = ref(
     ? props.recipe.fields.ingredients.split(",").map((item) => item.trim())
     : []
 );
+const src = ref(props.recipe.fields.image ? props.recipe.fields.image[0].url : null);
+
+const onFileSelect = (event) => {
+  const file = event.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    src.value = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+};
 
 const onSaveClick = async () => {
   const response = await axios.patch(
@@ -132,6 +162,7 @@ const onSaveClick = async () => {
       detail: "Recipe updated successfully",
       life: 3000,
     });
+    ingredients.value = [];
     emit("update");
   } else {
     toast.add({
@@ -146,7 +177,7 @@ const onSaveClick = async () => {
 
 <style lang="scss" scoped>
 img {
-  width: 20rem;
+  width: 10rem;
   border-radius: 6px;
 }
 

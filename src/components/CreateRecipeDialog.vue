@@ -18,14 +18,35 @@
       </div>
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
-      <div class="flex lg:flex-col flex-col gap-4">
+      <div class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center">
+        <div class="flex flex-row items-center gap-2 w-full">
+          <FileUpload
+            mode="basic"
+            @select="onFileSelect"
+            customUpload
+            auto
+            severity="secondary"
+            class="p-button-outlined"
+            chooseLabel="Choose Image"
+          />
+          <img
+            v-if="src"
+            :src="src"
+            alt="Image"
+            class="shadow-md rounded-xl w-32 sm:w-64"
+            style="filter: grayscale(100%)"
+          />
+        </div>
         <InputText v-model="title" class="w-full" placeholder="Recipe title" />
       </div>
       <Divider />
       <span v-if="isURL">URL</span>
       <InputText v-if="isURL" v-model="url" class="w-full" placeholder="Recipe URL" />
       <span v-if="!isURL">Ingredients</span>
-      <div v-if="!isURL && ingredients.length !== 0" class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+      <div
+        v-if="!isURL && ingredients.length !== 0"
+        class="grid lg:grid-cols-2 grid-cols-1 gap-4"
+      >
         <IconField v-for="(ingredient, idx) in ingredients" :key="idx">
           <InputText
             placeholder="Ingredient"
@@ -100,6 +121,7 @@ const ingredients = ref([]);
 const steps = ref("");
 const fileupload = ref();
 const url = ref(null);
+const src = ref(null);
 
 onUnmounted(() => {
   title.value = null;
@@ -111,6 +133,17 @@ onUnmounted(() => {
 
 const upload = () => {
   fileupload.value.upload();
+};
+
+const onFileSelect = (event) => {
+  const file = event.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    src.value = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
 };
 
 const onSaveClick = () => {
@@ -127,18 +160,18 @@ const onSaveClick = () => {
     ],
   };
 
+  emit("save", newRecipe);
   title.value = null;
   isURL.value = false;
   ingredients.value = [];
   steps.value = "";
   url.value = null;
-  emit("save", newRecipe);
 };
 </script>
 
 <style lang="scss" scoped>
 img {
-  width: 20rem;
+  width: 10rem;
   border-radius: 6px;
 }
 
