@@ -18,6 +18,7 @@
         :rows="10"
         v-if="!isInitializing"
         style="width: 100%; margin-top: 1rem"
+        @page="onPageUpdate"
       >
         <template #list="recipes">
           <div class="lg:grid lg:grid-cols-2 flex flex-col gap-2 py-2">
@@ -74,6 +75,10 @@ onMounted(async () => {
   isInitializing.value = false;
 });
 
+const onPageUpdate = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 const initRecipes = async () => {
   const response = await axios.get(
     "https://api.airtable.com/v0/appK13ISOZy5bznU1/tblQYAwgASHHYQ0MJ?sort%5B0%5D%5Bfield%5D=created&sort%5B0%5D%5Bdirection%5D=desc"
@@ -101,7 +106,9 @@ const initRecipes = async () => {
 const onSearchRecipe = () => {
   if (recipeQuery.value) {
     recipes.value = recipes.value.filter((recipe) =>
-      recipe.fields.title.toLowerCase().includes(recipeQuery.value.toLowerCase())
+      recipe.fields.title
+        .toLowerCase()
+        .includes(recipeQuery.value.toLowerCase())
     );
   } else {
     initRecipes();
@@ -136,9 +143,9 @@ const onSaveRecipe = async (newRecipe) => {
       life: 3000,
     });
     isCreateDialogVisible.value = false;
-    if (newRecipe.image) {
-      await uploadImage(newRecipe.image);
-    }
+    // if (newRecipe.image) {
+    //   await uploadImage(newRecipe.image);
+    // }
     await initRecipes();
   } else {
     toast.add({

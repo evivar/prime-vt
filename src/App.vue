@@ -17,19 +17,21 @@ import Toast from "primevue/toast";
 import { ref } from "vue";
 
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
 const router = useRouter();
+const { t } = useI18n();
 
 const items = ref([
   {
-    label: "Home",
+    label: t("menu.home"),
     icon: "pi pi-home",
     command: () => {
       router.push("/");
     },
   },
   {
-    label: "Recipes",
+    label: t("menu.recipes"),
     icon: "pi pi-book",
     command: () => {
       router.push("/recipes");

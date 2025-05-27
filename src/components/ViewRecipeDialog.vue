@@ -14,8 +14,8 @@
         <img
           class="lg:w-80 w-1/2"
           :src="
-            recipe.fields.image
-              ? recipe.fields.image[0].url
+            recipe.fields.imageURL
+              ? recipe.fields.imageURL
               : 'src/assets/output-onlinepngtools-white.png'
           "
           :alt="recipe.fields.title"

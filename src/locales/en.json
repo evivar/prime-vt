@@ -1,0 +1,12 @@
+{
+  "menu": {
+    "home": "Home",
+    "recipes": "Recipe book"
+  },
+  "home": {
+    "shoppingListEmpty": "Start adding items to your shopping list"
+  },
+  "buttons": {
+    "add": "Add"
+  }
+}

@@ -4,8 +4,8 @@
       <img
         class="block xl:block mx-auto rounded lg:w-40 w-full h-full object-cover"
         :src="
-          recipe.fields?.image
-            ? recipe.fields.image[0].url
+          recipe.fields?.imageURL
+            ? recipe.fields.imageURL
             : 'src/assets/output-onlinepngtools.png'
         "
         :alt="recipe.fields.title"

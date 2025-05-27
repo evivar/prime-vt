@@ -29,7 +29,7 @@
         ></InputText>
         <Button :disabled="!newItem" class="w-[20%]" id="add-btn" @click="onAddItem">
           <span v-if="isAdding" class="pi pi-spin pi-spinner"></span>
-          <span v-else>Add</span>
+          <span v-else>{{ $t("buttons.add") }}</span>
         </Button>
       </div>
       <ScrollPanel
@@ -37,7 +37,7 @@
         style="width: 100%; height: calc(100dvh - 200px); margin-top: 1rem"
       >
         <div v-if="shoppingList.length === 0" class="text-center">
-          Start adding items to your shopping list
+          {{ $t("home.shoppingListEmpty") }}
         </div>
         <SwipeToDelete
           v-else

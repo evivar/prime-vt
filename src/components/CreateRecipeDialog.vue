@@ -19,7 +19,7 @@
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
       <div class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center">
-        <div class="flex flex-row items-center gap-2 w-full">
+        <!-- <div class="flex flex-row items-center gap-2 w-full">
           <FileUpload
             mode="basic"
             @select="onFileSelect"
@@ -36,8 +36,9 @@
             class="shadow-md rounded-xl w-32 sm:w-64"
             style="filter: grayscale(100%)"
           />
-        </div>
+        </div> -->
         <InputText v-model="title" class="w-full" placeholder="Recipe title" />
+        <InputText v-model="imageURL" class="w-full" placeholder="Recipe image URL" />
       </div>
       <Divider />
       <span v-if="isURL">URL</span>
@@ -122,6 +123,7 @@ const steps = ref("");
 const fileupload = ref();
 const url = ref(null);
 const src = ref(null);
+const imageURL = ref(null);
 
 onUnmounted(() => {
   title.value = null;
@@ -129,6 +131,7 @@ onUnmounted(() => {
   ingredients.value = [];
   steps.value = "";
   url.value = null;
+  imageURL.value = null;
 });
 
 const upload = () => {
@@ -155,10 +158,10 @@ const onSaveClick = () => {
           ingredients: ingredients.value.toString(),
           steps: steps.value,
           url: isURL.value ? url.value : null,
+          imageURL: imageURL.value ? imageURL.value : null
         },
       },
     ],
-    image: src.value ? src.value : null,
   };
 
   emit("save", newRecipe);
@@ -167,6 +170,7 @@ const onSaveClick = () => {
   ingredients.value = [];
   steps.value = "";
   url.value = null;
+  imageURL.value = null;
 };
 </script>
 
