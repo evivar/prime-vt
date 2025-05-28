@@ -10,21 +10,39 @@
   >
     <template #header>
       <div class="inline-flex items-center justify-between w-full gap-4">
-        <span class="font-bold whitespace-nowrap">New recipe</span>
+        <span class="font-bold whitespace-nowrap">Edit recipe</span>
       </div>
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
-      <div class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center">
-        <InputText
-          v-model="recipe.fields.imageURL"
-          class="w-full"
-          placeholder="Recipe image URL"
-        />
-        <InputText
-          v-model="recipe.fields.title"
-          class="w-full"
-          placeholder="Recipe title"
-        />
+      <div class="flex flex-col gap-2">
+        <div
+          class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center"
+        >
+          <InputText
+            v-model="recipe.fields.imageURL"
+            class="w-full"
+            placeholder="Recipe image URL"
+          />
+          <InputText
+            v-model="recipe.fields.title"
+            class="w-full"
+            placeholder="Recipe title"
+          />
+        </div>
+        <div class="flex lg:flex-row flex-col gap-4 w-full lg:items-center">
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Portions</span>
+          <InputNumber v-model="recipe.fields.portions" class="w-full" />
+        </div>
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Time </span>
+          <InputNumber v-model="recipe.fields.time" class="w-full" :step="10" suffix=" mins." />
+        </div>
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Difficulty</span>
+          <Rating v-model="recipe.fields.difficulty" :stars="5" class="w-full" /> 
+        </div>
+        </div>
       </div>
       <Divider />
       <span v-if="recipe.fields.url">URL</span>
@@ -60,7 +78,11 @@
       ></Button>
       <Divider v-if="!recipe.fields.url" />
       <span v-if="!recipe.fields.url">Steps</span>
-      <Textarea v-if="!recipe.fields.url" v-model="recipe.fields.steps" rows="10" />
+      <Textarea
+        v-if="!recipe.fields.url"
+        v-model="recipe.fields.steps"
+        rows="10"
+      />
       <div class="flex items-center gap-4">
         <Button
           v-if="false"
@@ -94,6 +116,8 @@ import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Textarea from "primevue/textarea";
 import ToggleSwitch from "primevue/toggleswitch";
+import Rating from "primevue/rating";
+import InputNumber from "primevue/inputnumber";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
@@ -117,7 +141,9 @@ const ingredients = ref(
     ? props.recipe.fields.ingredients.split(",").map((item) => item.trim())
     : []
 );
-const src = ref(props.recipe.fields.image ? props.recipe.fields.image[0].url : null);
+const src = ref(
+  props.recipe.fields.image ? props.recipe.fields.image[0].url : null
+);
 
 const onFileSelect = (event) => {
   const file = event.files[0];
@@ -139,7 +165,10 @@ const onSaveClick = async () => {
         url: props.recipe.fields.url ? props.recipe.fields.url : null,
         ingredients: ingredients.value.toString(),
         steps: props.recipe.fields.steps,
-        imageURL: props.recipe.fields.imageURL
+        imageURL: props.recipe.fields.imageURL,
+        portions: props.recipe.fields.portions,
+        time: props.recipe.fields.time,
+        difficulty: props.recipe.fields.difficulty
       },
     }
   );

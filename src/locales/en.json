@@ -6,7 +6,11 @@
   "home": {
     "shoppingListEmpty": "Start adding items to your shopping list"
   },
+  "recipes":{
+    "searchPlaceholder": "Search recipes"
+  },
   "buttons": {
-    "add": "Add"
+    "add": "Add",
+    "newRecipe": "New Recipe"
   }
 }

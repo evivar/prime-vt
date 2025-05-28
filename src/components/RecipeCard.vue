@@ -11,10 +11,32 @@
         :alt="recipe.fields.title"
       />
     </div>
-    <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+    <div
+      class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6"
+    >
       <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-        <div class="text-lg font-medium mt-2 place-items-start">
-          {{ recipe.fields.title }}
+        <div class="flex flex-col lg:gap-8 gap-4">
+          <span class="text-lg font-medium mt-2 place-items-start">{{
+            recipe.fields.title
+          }}</span>
+          <div class="flex flex-row gap-4">
+            <div class="flex flex-row gap-2">
+              <span class="pi pi-clock"></span>
+              <span class="text-sm w-full">{{ recipe.fields.time }} mins.</span>
+            </div>
+            <div class="flex flex-row gap-2">
+              <span class="pi pi-star"></span>
+              <span class="text-sm w-full"
+                >{{ recipe.fields.difficulty }}
+              </span>
+            </div>
+            <div class="flex flex-row gap-2">
+              <span class="pi pi-users"></span>
+              <span class="text-sm w-full"
+                >{{ recipe.fields.portions }} pax.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="flex flex-col md:items-end gap-8">
@@ -64,7 +86,7 @@
       :recipe="recipe"
       @close="isEditDialogVisible = false"
       @update="onUpdateRecipe"
-      />
+    />
   </div>
 </template>
 
@@ -92,15 +114,13 @@ const onViewRecipeURLClick = (url) => {
 };
 
 const onDeleteRecipeClick = () => {
-  emit("deleteRecipe")
+  emit("deleteRecipe");
 };
 
 const onUpdateRecipe = () => {
-  isEditDialogVisible.value = false
+  isEditDialogVisible.value = false;
   emit("update");
 };
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -110,7 +130,13 @@ const onUpdateRecipe = () => {
 }
 
 .menu-card img {
-  object-fit: cover; /* Asegura que la imagen cubra el área sin deformarse */
+  object-fit: cover;
+  /* Asegura que la imagen cubra el área sin deformarse */
   height: 10rem;
+}
+
+tag {
+  background-color: #3c3c3c;
+  width: fit-content;
 }
 </style>

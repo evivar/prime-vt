@@ -7,8 +7,26 @@
     class="reicpe-dialog lg:w-2/3 w-full"
     modal
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    :header="recipe.fields.title"
   >
+  <template #header>
+    <div class="inline-flex items-center justify-between w-full gap-4">
+      <span class="font-bold whitespace-nowrap">{{ recipe.fields.title }}</span>
+      <div class="flex items-center gap-2">
+        <span>Difficulty</span>
+        <Rating
+          v-model="recipe.fields.difficulty"
+          :stars="5"
+          class="w-full"
+          disabled
+          />
+          <span>{{ recipe.fields.portions }}</span>
+          <span>servings</span>
+          <span class="pi pi-clock"></span>
+          <span class="w-full">{{ recipe.fields.time }} mins.</span>
+
+      </div>
+    </div>
+    </template>
     <div class="flex flex-col gap-6 rounded-2xl">
       <div class="mx-auto my-auto place-items-center">
         <img
@@ -75,6 +93,7 @@ import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import { ref } from "vue";
+import Rating from "primevue/rating";
 import { useToast } from "primevue/usetoast";
 
 import axios from "axios";

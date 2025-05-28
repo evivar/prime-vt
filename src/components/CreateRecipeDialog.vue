@@ -18,27 +18,25 @@
       </div>
     </template>
     <div class="flex flex-col gap-6 rounded-2xl">
+    <div class="flex flex-col gap-2">
       <div class="flex lg:flex-row flex-col-reverse gap-2 w-full items-center">
-        <!-- <div class="flex flex-row items-center gap-2 w-full">
-          <FileUpload
-            mode="basic"
-            @select="onFileSelect"
-            customUpload
-            auto
-            severity="secondary"
-            class="p-button-outlined"
-            chooseLabel="Choose Image"
-          />
-          <img
-            v-if="src"
-            :src="src"
-            alt="Image"
-            class="shadow-md rounded-xl w-32 sm:w-64"
-            style="filter: grayscale(100%)"
-          />
-        </div> -->
         <InputText v-model="title" class="w-full" placeholder="Recipe title" />
         <InputText v-model="imageURL" class="w-full" placeholder="Recipe image URL" />
+      </div>
+      <div class="flex lg:flex-row flex-col gap-4 w-full lg:items-center">
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Portions</span>
+          <InputNumber v-model="portions" class="w-full" />
+        </div>
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Time </span>
+          <InputNumber v-model="time" class="w-full" :step="10" suffix=" mins." />
+        </div>
+        <div class="flex flex-row gap-2 items-center lg:w-1/3 w-full">
+          <span class="label w-full">Difficulty</span>
+          <Rating v-model="difficulty" :stars="5" class="w-full" /> 
+        </div>
+        </div>
       </div>
       <Divider />
       <span v-if="isURL">URL</span>
@@ -104,6 +102,8 @@ import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import Textarea from "primevue/textarea";
 import ToggleSwitch from "primevue/toggleswitch";
+import Rating from "primevue/rating";
+import InputNumber from "primevue/inputnumber";
 import { onUnmounted, ref } from "vue";
 
 const emit = defineEmits(["close", "save"]);
@@ -124,6 +124,9 @@ const fileupload = ref();
 const url = ref(null);
 const src = ref(null);
 const imageURL = ref(null);
+const difficulty = ref(0);
+const portions = ref(0);
+const time = ref(0);
 
 onUnmounted(() => {
   title.value = null;
@@ -158,7 +161,10 @@ const onSaveClick = () => {
           ingredients: ingredients.value.toString(),
           steps: steps.value,
           url: isURL.value ? url.value : null,
-          imageURL: imageURL.value ? imageURL.value : null
+          imageURL: imageURL.value ? imageURL.value : null,
+          portions: portions.value ? portions.value : 0,
+          time: time.value ? time.value : 0,
+          difficulty: difficulty.value ? difficulty.value : 0
         },
       },
     ],

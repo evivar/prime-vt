@@ -6,10 +6,10 @@
           v-model="recipeQuery"
           @input="onSearchRecipe"
           class="lg:w-[80%] w-full"
-          placeholder="Search recipes"
+          :placeholder="$t('recipes.searchPlaceholder')"
         ></InputText>
-        <Button class="lg:w-[20%] w-full" @click="isCreateDialogVisible = true"
-          >New recipe</Button
+        <Button class="lg:w-[20%] w-full" id="new-recipe-btn" @click="isCreateDialogVisible = true"
+          >{{ $t('buttons.newRecipe') }}</Button
         >
       </div>
       <DataView
@@ -209,7 +209,7 @@ const onUpdateRecipe = async () => {
   font-size: xx-large;
 }
 
-#add-btn > span {
+#new-recipe-btn > span {
   font-weight: 900;
 }
 </style>
