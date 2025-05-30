@@ -4,7 +4,7 @@
     :closable="false"
     pt:root:class="!border-0 "
     pt:mask:class="backdrop-blur-lg"
-    class="reicpe-dialog lg:w-2/3 w-full"
+    class="reicpe-dialog lg:w-2/4 w-full"
     modal
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
   >

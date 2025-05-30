@@ -20,7 +20,7 @@
             recipe.fields.title
           }}</span>
           <div class="flex flex-row gap-4">
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-2" v-if="recipe.fields.time != 0">
               <span class="pi pi-clock"></span>
               <span class="text-sm w-full">{{ recipe.fields.time }} mins.</span>
             </div>

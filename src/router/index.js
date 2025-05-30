@@ -9,13 +9,29 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: {
+        title: 'Home',
+      },
     },
     {
       path: '/recipes',
       name: 'recipes',
       component: RecipesView,
+      meta: {
+        title: 'Recipes',
+      },
     },
   ],
 })
+
+router.beforeEach((to) => {
+  const { title } = to.meta;
+  const defaultTitle = 'My Home Planner';
+  if (title) {
+    document.title = defaultTitle + " - "  + title;
+  } else {
+    document.title = defaultTitle;
+  }
+});
 
 export default router

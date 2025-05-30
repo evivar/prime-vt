@@ -4,7 +4,7 @@
     :closable="false"
     pt:root:class="!border-0 "
     pt:mask:class="backdrop-blur-lg"
-    class="reicpe-dialog lg:w-2/3 w-full"
+    class="reicpe-dialog lg:w-2/4 w-full"
     modal
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
   >
@@ -21,8 +21,8 @@
           />
           <span>{{ recipe.fields.portions }}</span>
           <span>servings</span>
-          <span class="pi pi-clock"></span>
-          <span class="w-full">{{ recipe.fields.time }} mins.</span>
+          <span v-if="recipe.fields.time != 0" class="pi pi-clock"></span>
+          <span class="w-full" v-if="recipe.fields.time != 0">{{ recipe.fields.time }} mins.</span>
 
       </div>
     </div>
